@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring KONVEN </title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+   
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+    
+    
+    
+
+    <!-- Table Modal -->
+    <div id="tableModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-800">📋 Data Lengkap </h2>
+                    <button id="closeTable" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Detail MC</th>
+         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Item</th>                             
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">File Excel</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
+                                                                       
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assortment</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ETD 1</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Shipment Plan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ETD 2</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lama</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PR</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Polos</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Karantina</th>
+                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CK</th>
+                                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CB</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estimasi</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                   
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fullTableBody" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-800">📝 Detail Produk</h2>
+                    <button id="closeDetail" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+                </div>
+                <div id="detailContent" class="p-6">
+                    <!-- Detail content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 card-shadow-lg rounded-2xl mobile-p-4 p-8 mb-6 text-white relative overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16"></div>
+                <div class="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-12 translate-y-12"></div>
+                <div class="absolute top-1/2 right-1/4 w-16 h-16 bg-white rounded-full"></div>
+            </div>
+            
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-3xl lg:text-4xl font-bold mb-3 flex items-center justify-center lg:justify-start">
+                        <span class="mr-4 text-4xl lg:text-5xl"></span>
+                        <div>
+                            <div>Monitoring Konven</div>
+                            <div class="text-lg lg:text-xl font-normal text-blue-100 mt-1">Dashboard Professional</div>
+                        </div>
+                    </h1>
+    <p class="text-blue-100 mobile-text-sm lg:text-base">  </p>
+                    <div id="lastUpdate" class="text-xs text-blue-200 mt-3 bg-white bg-opacity-20 inline-block px-3 py-1 rounded-full"></div>
+                </div>
+                <div class="flex flex-wrap items-center justify-center lg:justify-end gap-2 lg:gap-3">
+                    <button id="tableBtn" class="btn-professional bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white border border-white border-opacity-30 px-4 py-3 rounded-xl flex items-center space-x-2 text-sm mobile-full lg:w-auto transition-all duration-200">
+                        <span>📋</span>
+                        <span class="mobile-hidden lg:inline"></span>
+                        <span class="lg:hidden">Tabel Detail</span>
+                    </button>
+                    <button onclick="window.open('https://ppicwkb.github.io/papankonven/', '_blank')" class="btn-professional bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white border border-white border-opacity-30 px-4 py-3 rounded-xl flex items-center space-x-2 text-sm mobile-full lg:w-auto transition-all duration-200">
+                        <span> 🖥️</span>
+                        <span class="mobile-hidden lg:inline"> </span>
+                        <span class="lg:hidden">Papan Produksi</span>
+                    </button>
+                    
+                    
+                    <button id="refreshBtn" class="btn-professional bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white border border-white border-opacity-30 px-4 py-3 rounded-xl flex items-center space-x-2 text-sm mobile-full lg:w-auto transition-all duration-200">
+                        <span id="refreshIcon">🔄</span>
+                        <span class="mobile-hidden lg:inline"></span>
+                        <span class="lg:hidden">Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="grid grid-cols-3 lg:grid-cols-1 gap-2 lg:gap-6 mb-6">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 card-shadow-lg rounded-2xl mobile-p-4 p-6 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-s lg:text-sm font-medium">Total Produk</p>
+                        <p id="totalItems" class="text-xl lg:text-3xl font-bold">-</p>
+                        <div class="text-s text-blue-200 mt-1">🦐 produk</div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-green-500 to-green-600 card-shadow-lg rounded-2xl mobile-p-4 p-6 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-s lg:text-sm font-medium">Total Stock</p>
+                        <p id="totalStock" class="text-xl lg:text-3xl font-bold">-</p>
+                        <div class="text-s text-green-200 mt-1">📦 Carton</div>
+                    </div>
+                   
+                    
+                </div>
+            </div>
+          
+            
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 card-shadow-lg rounded-2xl mobile-p-4 p-6 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-s lg:text-sm font-medium">Brands</p>
+                        <p id="totalBrands" class="text-xl lg:text-3xl font-bold">-</p>
+                        <div class="text-s text-purple-200 mt-1">🏷️ Brand </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Quick Search Bar -->
+        <div class="bg-white card-shadow-lg rounded-xl mobile-p-4 p-6 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div class="flex-1 lg:max-w-md">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-400 text-lg">🔍</span>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="Cari semua data..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 focus:bg-white transition-all duration-200">
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="filterToggle" class="btn-professional bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl flex items-center space-x-2 text-sm transition-all duration-200">
+                        <span>⚙️</span>
+                        <span>Filter </span>
+                        <span id="filterToggleIcon" class="transform transition-transform duration-200">▼</span>
+                    </button>
+                    <div class="text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded-xl">
+                        <span id="showingCount" class="font-semibold text-blue-600">0</span> / <span id="totalCount" class="font-semibold text-gray-800">0</span> item
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Filters (Collapsible) -->
+        <div id="advancedFilters" class="bg-white card-shadow rounded-xl mobile-p-4 p-6 mb-6 hidden">
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                    <span class="mr-2">🎯</span>
+                    Filter 
+                </h3>
+              
+                
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Brand Filter -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 flex items-center">
+                        <span class="mr-2">🏷️</span>
+                        Filter Brand
+                    </label>
+                    <select id="brandFilter" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-200">
+                        <option value="">Semua Brand</option>
+                    </select>
+                </div>
+
+                
+                
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white card-shadow-lg rounded-2xl overflow-hidden">
+            <div class="mobile-p-4 p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg lg:text-xl font-bold text-gray-800 flex items-center">
+                        <span class="mr-3 text-2xl">📋</span>
+                        <div>
+                            <div>Data Stok Konven </div>
+                            <div class="text-sm font-normal text-gray-600 mt-1">Tabel monitoring real-time</div>
+                        </div>
+                    </h2>
+                    <div class="hidden lg:flex items-center space-x-2 text-sm text-gray-600">
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Live Data</span>
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingState" class="flex items-center justify-center p-16">
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <span class="text-gray-600 font-medium">Memuat data...</span>
+                    <p class="text-sm text-gray-500 mt-2">Mengambil data terbaru dari server</p>
+                </div>
+            </div>
+            <div id="errorState" class="hidden p-16 text-center">
+                <div class="text-6xl mb-4">😞</div>
+                <div class="text-red-500 text-xl font-bold mb-2">Gagal memuat data</div>
+                <p class="text-gray-600 mb-6">Periksa koneksi internet atau coba lagi nanti</p>
+                <button onclick="loadData()" class="btn-professional bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium">
+                    🔄 Coba Lagi
+                </button>
+            </div>
+            <div id="tableContainer" class="hidden mobile-scroll">
+                <table class="w-full table-professional">
+                    <thead>
+                        <tr>
+                            <th class="px-3 lg:px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-purple-700 transition-all duration-200" >
+                                <div class="flex items-center space-x-2">
+                                    <span>🏷️</span>
+                                    <span>Brand</span>
+                                 
+                                </div>
+                            </th>
+                            
+                            <th class="px-3 lg:px-6 py-4 text-left text-xs font-bold uppercase tracking-wider mobile-hidden">
+                                <div class="flex items-center space-x-2">
+                                    <span>📝</span>
+                                    <span>Order</span>
+                                </div>
+                            </th>
+                            <th class="px-3 lg:px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-purple-700 transition-all duration-200" >
+                                <div class="flex items-center space-x-2">
+                                    <span>📊</span>
+                                    <span>Stock</span>
+                                 
+                                </div>
+                            </th>
+                            <th class="px-3 lg:px-6 py-4 text-left text-xs font-bold uppercase tracking-wider mobile-hidden">
+                                <div class="flex items-center space-x-2">
+                                    <span>📅</span>
+                                    <span>ETD</span>
+                                </div>
+                            </th>
+                          
+                            
+                            <th class="px-3 lg:px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
+                                <div class="flex items-center space-x-2">
+                                    <span>🖥️</span>
+                                    <span>Detail</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="bg-white divide-y divide-gray-100">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+      <script src="script.js"></script>
+      
+</body>
+</html>
